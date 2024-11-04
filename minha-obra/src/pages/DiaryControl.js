@@ -7,17 +7,21 @@ const DiaryControl = () => {
   const [diaries, setDiaries] = useState([]);
   const [formData, setFormData] = useState({
     date: '',
+    startTime: '',
+    endTime: '',
     employees: [],
     morningWeather: '',
     afternoonWeather: '',
     activities: [],
-    materials: []
+    materials: [],
+    occurrences: []
   });
 
-  // Estado temporário para funcionários, atividades e materiais
+  // Estado temporário para funcionários, atividades, materiais e ocorrências
   const [employee, setEmployee] = useState({ quantity: '', role: '', company: '' });
   const [activity, setActivity] = useState('');
   const [material, setMaterial] = useState('');
+  const [occurrence, setOccurrence] = useState('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDiary, setSelectedDiary] = useState(null);
@@ -27,7 +31,7 @@ const DiaryControl = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Funções para adicionar funcionários, atividades e materiais ao diário
+  // Funções para adicionar funcionários, atividades, materiais e ocorrências ao diário
   const addEmployee = () => {
     setFormData({
       ...formData,
@@ -52,17 +56,28 @@ const DiaryControl = () => {
     setMaterial('');
   };
 
+  const addOccurrence = () => {
+    setFormData({
+      ...formData,
+      occurrences: [...formData.occurrences, occurrence]
+    });
+    setOccurrence('');
+  };
+
   // Função para adicionar ou atualizar o diário
   const handleSubmit = (e) => {
     e.preventDefault();
     setDiaries([...diaries, formData]);
     setFormData({
       date: '',
+      startTime: '',
+      endTime: '',
       employees: [],
       morningWeather: '',
       afternoonWeather: '',
       activities: [],
-      materials: []
+      materials: [],
+      occurrences: []
     });
   };
 
@@ -72,29 +87,35 @@ const DiaryControl = () => {
     setIsModalOpen(true);
   };
 
-    // Define a função handleDelete
-    const handleDelete = (index) => {
-        const updatedDiaries = diaries.filter((_, i) => i !== index);
-        setDiaries(updatedDiaries);
-        };
+  // Função para deletar um diário
+  const handleDelete = (index) => {
+    const updatedDiaries = diaries.filter((_, i) => i !== index);
+    setDiaries(updatedDiaries);
+  };
 
   // Função para exportar o diário selecionado para PDF
   const handleExportPDF = () => {
     const doc = new jsPDF();
     doc.text(`Diário de Obra - ${selectedDiary.date}`, 10, 10);
-    doc.text('Funcionários:', 10, 20);
+    doc.text(`Horário de Início: ${selectedDiary.startTime}`, 10, 20);
+    doc.text(`Horário de Término: ${selectedDiary.endTime}`, 10, 30);
+    doc.text('Funcionários:', 10, 40);
     selectedDiary.employees.forEach((emp, i) => {
-      doc.text(`${i + 1}. ${emp.quantity} ${emp.role} - ${emp.company}`, 10, 30 + i * 10);
+      doc.text(`${i + 1}. ${emp.quantity} ${emp.role} - ${emp.company}`, 10, 50 + i * 10);
     });
-    doc.text(`Clima da manhã: ${selectedDiary.morningWeather}`, 10, 50);
-    doc.text(`Clima da tarde: ${selectedDiary.afternoonWeather}`, 10, 60);
-    doc.text('Atividades Executadas:', 10, 70);
+    doc.text(`Clima da Manhã: ${selectedDiary.morningWeather}`, 10, 70);
+    doc.text(`Clima da Tarde: ${selectedDiary.afternoonWeather}`, 10, 80);
+    doc.text('Atividades Executadas:', 10, 90);
     selectedDiary.activities.forEach((act, i) => {
-      doc.text(`${i + 1}. ${act}`, 10, 80 + i * 10);
+      doc.text(`${i + 1}. ${act}`, 10, 100 + i * 10);
     });
-    doc.text('Material Entregue:', 10, 100);
+    doc.text('Material Entregue:', 10, 110);
     selectedDiary.materials.forEach((mat, i) => {
-      doc.text(`${i + 1}. ${mat}`, 10, 110 + i * 10);
+      doc.text(`${i + 1}. ${mat}`, 10, 120 + i * 10);
+    });
+    doc.text('Ocorrências:', 10, 130);
+    selectedDiary.occurrences.forEach((occ, i) => {
+      doc.text(`${i + 1}. ${occ}`, 10, 140 + i * 10);
     });
     doc.save(`Diário_${selectedDiary.date}.pdf`);
   };
@@ -111,6 +132,28 @@ const DiaryControl = () => {
             type="date"
             name="date"
             value={formData.date}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        {/* Horário de início e término da obra */}
+        <div>
+          <label>Horário de Início:</label>
+          <input
+            type="time"
+            name="startTime"
+            value={formData.startTime}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Horário de Término:</label>
+          <input
+            type="time"
+            name="endTime"
+            value={formData.endTime}
             onChange={handleChange}
             required
           />
@@ -186,6 +229,18 @@ const DiaryControl = () => {
           <button type="button" onClick={addMaterial}>Adicionar Material</button>
         </div>
 
+        {/* Seção para Ocorrências */}
+        <div>
+          <label>Ocorrências</label>
+          <input
+            type="text"
+            placeholder="Descrição da ocorrência"
+            value={occurrence}
+            onChange={(e) => setOccurrence(e.target.value)}
+          />
+          <button type="button" onClick={addOccurrence}>Adicionar Ocorrência</button>
+        </div>
+
         <button type="submit">Salvar Diário</button>
       </form>
 
@@ -209,6 +264,8 @@ const DiaryControl = () => {
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>
             <h3>Diário de {selectedDiary.date}</h3>
+            <p><strong>Horário de Início:</strong> {selectedDiary.startTime}</p>
+            <p><strong>Horário de Término:</strong> {selectedDiary.endTime}</p>
             <p><strong>Funcionários:</strong></p>
             {selectedDiary.employees.map((emp, i) => (
               <p key={i}>{emp.quantity} {emp.role} - {emp.company}</p>
@@ -222,6 +279,10 @@ const DiaryControl = () => {
             <p><strong>Material Entregue:</strong></p>
             {selectedDiary.materials.map((mat, i) => (
               <p key={i}>{mat}</p>
+            ))}
+            <p><strong>Ocorrências:</strong></p>
+            {selectedDiary.occurrences.map((occ, i) => (
+              <p key={i}>{occ}</p>
             ))}
             <button onClick={handleExportPDF}>Exportar para PDF</button>
             <button onClick={() => setIsModalOpen(false)}>Fechar</button>
