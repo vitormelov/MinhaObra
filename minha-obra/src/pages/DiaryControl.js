@@ -1,9 +1,11 @@
 // src/pages/DiaryControl.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import jsPDF from 'jspdf';
 
+const API_URL = 'http://localhost:5000/api/diaries'; // URL base do backend
+
 const DiaryControl = () => {
-  // Estado inicial do formulário do diário de obra
   const [diaries, setDiaries] = useState([]);
   const [formData, setFormData] = useState({
     date: '',
@@ -17,7 +19,6 @@ const DiaryControl = () => {
     occurrences: []
   });
 
-  // Estado temporário para funcionários, atividades, materiais e ocorrências
   const [employee, setEmployee] = useState({ quantity: '', role: '', company: '' });
   const [activity, setActivity] = useState('');
   const [material, setMaterial] = useState('');
@@ -26,7 +27,20 @@ const DiaryControl = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDiary, setSelectedDiary] = useState(null);
 
-  // Função para manipular entradas do formulário principal
+  // Carregar diários do backend ao carregar o componente
+  useEffect(() => {
+    const fetchDiaries = async () => {
+      try {
+        const response = await axios.get(API_URL);
+        setDiaries(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar diários:', error);
+      }
+    };
+    fetchDiaries();
+  }, []);
+
+  // Manipulador para as entradas do formulário principal
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -64,33 +78,42 @@ const DiaryControl = () => {
     setOccurrence('');
   };
 
-  // Função para adicionar ou atualizar o diário
-  const handleSubmit = (e) => {
+  // Função para salvar o diário no backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setDiaries([...diaries, formData]);
-    setFormData({
-      date: '',
-      startTime: '',
-      endTime: '',
-      employees: [],
-      morningWeather: '',
-      afternoonWeather: '',
-      activities: [],
-      materials: [],
-      occurrences: []
-    });
+    try {
+      const response = await axios.post(API_URL, formData);
+      setDiaries([...diaries, response.data]);
+      setFormData({
+        date: '',
+        startTime: '',
+        endTime: '',
+        employees: [],
+        morningWeather: '',
+        afternoonWeather: '',
+        activities: [],
+        materials: [],
+        occurrences: []
+      });
+    } catch (error) {
+      console.error('Erro ao salvar o diário:', error);
+    }
   };
 
-  // Função para abrir o modal e exibir o diário selecionado
-  const handleView = (index) => {
-    setSelectedDiary(diaries[index]);
+  // Função para visualizar o diário em um modal
+  const handleView = (diary) => {
+    setSelectedDiary(diary);
     setIsModalOpen(true);
   };
 
-  // Função para deletar um diário
-  const handleDelete = (index) => {
-    const updatedDiaries = diaries.filter((_, i) => i !== index);
-    setDiaries(updatedDiaries);
+  // Função para deletar o diário no backend
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      setDiaries(diaries.filter((diary) => diary._id !== id));
+    } catch (error) {
+      console.error('Erro ao deletar o diário:', error);
+    }
   };
 
   // Função para exportar o diário selecionado para PDF
@@ -247,11 +270,11 @@ const DiaryControl = () => {
       {/* Lista de diários */}
       <div style={styles.diaryList}>
         {diaries.length > 0 ? (
-          diaries.map((diary, index) => (
-            <div key={index} style={styles.diaryItem}>
+          diaries.map((diary) => (
+            <div key={diary._id} style={styles.diaryItem}>
               <p><strong>Data:</strong> {diary.date}</p>
-              <button onClick={() => handleView(index)}>Visualizar</button>
-              <button onClick={() => handleDelete(index)}>Deletar</button>
+              <button onClick={() => handleView(diary)}>Visualizar</button>
+              <button onClick={() => handleDelete(diary._id)}>Deletar</button>
             </div>
           ))
         ) : (
