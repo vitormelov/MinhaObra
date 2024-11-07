@@ -7,15 +7,19 @@ import ContractsControl from './pages/ContractsControl';
 import ScheduleControl from './pages/ScheduleControl';
 import DiaryControl from './pages/DiaryControl';
 import CostControl from './pages/CostControl';
+import AdmLogin from './pages/AdmLogin';
+import AdmPage from './pages/AdmPage';
 import PrivateRoute from './components/PrivateRoute';
 
 const AppRoutes = () => {
   return (
     <Router>
       <Routes>
+        {/* Rota para Login do Usuário e do Administrador */}
         <Route path="/" element={<Login />} />
-        
-        {/* Rotas protegidas */}
+        <Route path="/admin-login" element={<AdmLogin />} />
+
+        {/* Rotas protegidas para o usuário */}
         <Route
           path="/home"
           element={
@@ -53,6 +57,16 @@ const AppRoutes = () => {
           element={
             <PrivateRoute>
               <CostControl />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Rota protegida para o administrador */}
+        <Route
+          path="/admin-page"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <AdmPage />
             </PrivateRoute>
           }
         />

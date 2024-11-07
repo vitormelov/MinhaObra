@@ -11,8 +11,10 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Tenta o login; se bem-sucedido, redireciona para /home
-    if (login(email, password)) {
+    
+    // Verifique as credenciais de funcionário
+    if (email === 'funcionario@gmail.com' && password === 'senha') {
+      login(); // Login de funcionário
       navigate('/home');
     } else {
       alert('Credenciais inválidas. Tente novamente.');
@@ -43,6 +45,9 @@ const Login = () => {
         </div>
         <button type="submit">Entrar</button>
       </form>
+
+      {/* Botão para a área do administrador */}
+      <button onClick={() => navigate('/admin-login')}>Área do Administrador</button>
     </div>
   );
 };
