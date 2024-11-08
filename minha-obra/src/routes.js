@@ -9,6 +9,9 @@ import DiaryControl from './pages/DiaryControl';
 import CostControl from './pages/CostControl';
 import AdmLogin from './pages/AdmLogin';
 import AdmPage from './pages/AdmPage';
+import WorkingSiteInclusion from './pages/WorkingSiteInclusion';
+import WorkerInclusion from './pages/WorkerInclusion';
+import Permissions from './pages/Permissions';
 import PrivateRoute from './components/PrivateRoute';
 
 const AppRoutes = () => {
@@ -61,12 +64,36 @@ const AppRoutes = () => {
           }
         />
 
-        {/* Rota protegida para o administrador */}
+        {/* Rotas protegidas para o administrador */}
         <Route
           path="/admin-page"
           element={
             <PrivateRoute adminOnly={true}>
               <AdmPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/working-site-inclusion"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <WorkingSiteInclusion />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/worker-inclusion"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <WorkerInclusion />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/permissions"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <Permissions />
             </PrivateRoute>
           }
         />
