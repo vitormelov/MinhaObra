@@ -4,7 +4,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+// Importação das rotas
 const diaryRoutes = require('./routes/diaryRoutes');
+const workerRoutes = require('./routes/workerRoutes'); // Rota para cadastro de funcionários
+const authRoutes = require('./routes/authRoutes'); // Rota para autenticação
+const workRoutes = require('./routes/workRoutes'); // Rota para cadastro de obras
 
 const app = express();
 
@@ -22,6 +26,9 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Rotas
 app.use('/api/diaries', diaryRoutes);
+app.use('/api/workers', workerRoutes); // Rota para funcionários
+app.use('/api/auth', authRoutes); // Rota para autenticação
+app.use('/api/works', workRoutes); // Rota para obras
 
 // Iniciar o servidor
 const PORT = process.env.PORT || 5000;
