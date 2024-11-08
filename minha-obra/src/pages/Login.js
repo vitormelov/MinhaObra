@@ -1,6 +1,7 @@
 // src/pages/Login.js
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
@@ -9,15 +10,20 @@ const Login = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Verifique as credenciais de funcionário
-    if (email === 'funcionario@gmail.com' && password === 'senha') {
-      login(); // Login de funcionário
-      navigate('/home');
-    } else {
-      alert('Credenciais inválidas. Tente novamente.');
+
+    try {
+      // Enviar requisição de login ao backend
+      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      
+      // Armazenar o token e autenticar o usuário
+      localStorage.setItem('token', response.data.token);
+      login(); // Autenticar o usuário no contexto
+      navigate('/home'); // Redirecionar para a página inicial
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      alert('Erro ao fazer login. Verifique as credenciais e tente novamente.');
     }
   };
 

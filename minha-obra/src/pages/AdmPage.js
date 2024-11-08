@@ -21,6 +21,11 @@ const AdmPage = () => {
       <button onClick={() => navigate('/permissions')}>
         Permissões
       </button>
+
+      {/* Botão para lista de funcionários e obras */}
+      <button onClick={() => navigate('/work-list')}>
+        Lista de Funcionários e Obras
+      </button>
     </div>
   );
 };

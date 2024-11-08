@@ -13,6 +13,7 @@ import WorkingSiteInclusion from './pages/WorkingSiteInclusion';
 import WorkerInclusion from './pages/WorkerInclusion';
 import Permissions from './pages/Permissions';
 import PrivateRoute from './components/PrivateRoute';
+import WorkList from './pages/WorkList';
 
 const AppRoutes = () => {
   return (
@@ -94,6 +95,14 @@ const AppRoutes = () => {
           element={
             <PrivateRoute adminOnly={true}>
               <Permissions />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/work-list"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <WorkList />
             </PrivateRoute>
           }
         />
