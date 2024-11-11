@@ -7,5 +7,6 @@ const workerController = require('../controllers/workerController');
 router.post('/', workerController.createWorker);
 router.get('/', workerController.getAllWorkers);
 router.delete('/:id', workerController.deleteWorker);
+router.put('/:id', workerController.updateWorker);
 
 module.exports = router;

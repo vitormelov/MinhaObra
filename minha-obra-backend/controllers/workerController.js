@@ -43,3 +43,14 @@ exports.deleteWorker = async (req, res) => {
     res.status(500).json({ message: 'Erro ao deletar funcionário', error });
   }
 };
+
+exports.updateWorker = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+    const updatedWorker = await Worker.findByIdAndUpdate(id, updatedData, { new: true });
+    res.status(200).json(updatedWorker);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao atualizar funcionário', error });
+  }
+};
