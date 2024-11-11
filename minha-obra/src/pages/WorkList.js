@@ -6,16 +6,14 @@ const WorkList = () => {
   const [workers, setWorkers] = useState([]);
   const [works, setWorks] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editData, setEditData] = useState(null); // Armazena dados para edição
-  const [isWorker, setIsWorker] = useState(true); // Define se é um funcionário ou obra sendo editado
+  const [editData, setEditData] = useState(null);
+  const [isWorker, setIsWorker] = useState(true);
 
-  // Buscar funcionários e obras ao carregar a página
   useEffect(() => {
     fetchWorkers();
     fetchWorks();
   }, []);
 
-  // Função para buscar funcionários
   const fetchWorkers = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/workers');
@@ -25,7 +23,6 @@ const WorkList = () => {
     }
   };
 
-  // Função para buscar obras
   const fetchWorks = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/works');
@@ -35,7 +32,6 @@ const WorkList = () => {
     }
   };
 
-  // Função para deletar funcionário
   const deleteWorker = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/workers/${id}`);
@@ -45,7 +41,6 @@ const WorkList = () => {
     }
   };
 
-  // Função para deletar obra
   const deleteWork = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/works/${id}`);
@@ -55,20 +50,17 @@ const WorkList = () => {
     }
   };
 
-  // Abrir modal de edição com dados do funcionário ou obra selecionada
   const openEditModal = (item, isWorker) => {
     setEditData(item);
     setIsWorker(isWorker);
     setIsEditModalOpen(true);
   };
 
-  // Fechar o modal de edição
   const closeEditModal = () => {
     setIsEditModalOpen(false);
     setEditData(null);
   };
 
-  // Função para atualizar os dados de funcionário ou obra no backend
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -76,8 +68,6 @@ const WorkList = () => {
         ? `http://localhost:5000/api/workers/${editData._id}`
         : `http://localhost:5000/api/works/${editData._id}`;
       await axios.put(url, editData);
-
-      // Atualizar a lista com os novos dados
       isWorker ? fetchWorkers() : fetchWorks();
       closeEditModal();
     } catch (error) {
@@ -86,119 +76,197 @@ const WorkList = () => {
   };
 
   return (
-    <div>
-      <h2>Lista de Funcionários</h2>
-      <ul>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Lista de Funcionários</h2>
+      <ul style={styles.list}>
         {workers.map((worker) => (
-          <li key={worker._id}>
-            <strong>Nome:</strong> {worker.name} - <strong>Email:</strong> {worker.email}
-            <button onClick={() => openEditModal(worker, true)}>Editar</button>
-            <button onClick={() => deleteWorker(worker._id)}>Deletar</button>
+          <li key={worker._id} style={styles.listItem}>
+            <p><strong>Nome:</strong> {worker.name}</p>
+            <p><strong>Email:</strong> {worker.email}</p>
+            <button style={styles.button} onClick={() => openEditModal(worker, true)}>Editar</button>
+            <button style={styles.deleteButton} onClick={() => deleteWorker(worker._id)}>Deletar</button>
           </li>
         ))}
       </ul>
 
-      <h2>Lista de Obras</h2>
-      <ul>
+      <h2 style={styles.title}>Lista de Obras</h2>
+      <ul style={styles.list}>
         {works.map((work) => (
-          <li key={work._id}>
+          <li key={work._id} style={styles.listItem}>
             <p><strong>Nome da Obra:</strong> {work.name}</p>
             <p><strong>Endereço:</strong> {work.address}</p>
             <p><strong>Tipo da Obra:</strong> {work.type}</p>
             <p><strong>Data de Início:</strong> {new Date(work.startDate).toLocaleDateString()}</p>
             <p><strong>Duração (em dias):</strong> {work.duration}</p>
             <p><strong>Data de Término:</strong> {new Date(work.endDate).toLocaleDateString()}</p>
-            <button onClick={() => openEditModal(work, false)}>Editar</button>
-            <button onClick={() => deleteWork(work._id)}>Deletar</button>
+            <button style={styles.button} onClick={() => openEditModal(work, false)}>Editar</button>
+            <button style={styles.deleteButton} onClick={() => deleteWork(work._id)}>Deletar</button>
           </li>
         ))}
       </ul>
 
-      {/* Modal de Edição */}
       {isEditModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Editar {isWorker ? 'Funcionário' : 'Obra'}</h3>
-            <form onSubmit={handleEditSubmit}>
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+            <h3 style={styles.modalTitle}>Editar {isWorker ? 'Funcionário' : 'Obra'}</h3>
+            <form onSubmit={handleEditSubmit} style={styles.form}>
               {isWorker ? (
                 <>
-                  <label>Nome:</label>
+                  <label style={styles.label}>Nome:</label>
                   <input
                     type="text"
                     value={editData.name}
-                    onChange={(e) =>
-                      setEditData({ ...editData, name: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                    style={styles.input}
                   />
-                  <label>Email:</label>
+                  <label style={styles.label}>Email:</label>
                   <input
                     type="email"
                     value={editData.email}
-                    onChange={(e) =>
-                      setEditData({ ...editData, email: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                    style={styles.input}
                   />
                 </>
               ) : (
                 <>
-                  <label>Nome da Obra:</label>
+                  <label style={styles.label}>Nome da Obra:</label>
                   <input
                     type="text"
                     value={editData.name}
-                    onChange={(e) =>
-                      setEditData({ ...editData, name: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                    style={styles.input}
                   />
-                  <label>Endereço:</label>
+                  <label style={styles.label}>Endereço:</label>
                   <input
                     type="text"
                     value={editData.address}
-                    onChange={(e) =>
-                      setEditData({ ...editData, address: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, address: e.target.value })}
+                    style={styles.input}
                   />
-                  <label>Tipo da Obra:</label>
+                  <label style={styles.label}>Tipo da Obra:</label>
                   <input
                     type="text"
                     value={editData.type}
-                    onChange={(e) =>
-                      setEditData({ ...editData, type: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, type: e.target.value })}
+                    style={styles.input}
                   />
-                  <label>Data de Início:</label>
+                  <label style={styles.label}>Data de Início:</label>
                   <input
                     type="date"
-                    value={editData.startDate.split('T')[0]} // Remove timestamp
-                    onChange={(e) =>
-                      setEditData({ ...editData, startDate: e.target.value })
-                    }
+                    value={editData.startDate.split('T')[0]}
+                    onChange={(e) => setEditData({ ...editData, startDate: e.target.value })}
+                    style={styles.input}
                   />
-                  <label>Duração (em dias):</label>
+                  <label style={styles.label}>Duração (em dias):</label>
                   <input
                     type="number"
                     value={editData.duration}
-                    onChange={(e) =>
-                      setEditData({ ...editData, duration: e.target.value })
-                    }
+                    onChange={(e) => setEditData({ ...editData, duration: e.target.value })}
+                    style={styles.input}
                   />
-                  <label>Data de Término:</label>
+                  <label style={styles.label}>Data de Término:</label>
                   <input
                     type="date"
-                    value={editData.endDate.split('T')[0]} // Remove timestamp
-                    onChange={(e) =>
-                      setEditData({ ...editData, endDate: e.target.value })
-                    }
+                    value={editData.endDate.split('T')[0]}
+                    onChange={(e) => setEditData({ ...editData, endDate: e.target.value })}
+                    style={styles.input}
                   />
                 </>
               )}
-              <button type="submit">Salvar Alterações</button>
-              <button type="button" onClick={closeEditModal}>Cancelar</button>
+              <button type="submit" style={styles.button}>Salvar Alterações</button>
+              <button type="button" onClick={closeEditModal} style={styles.cancelButton}>Cancelar</button>
             </form>
           </div>
         </div>
       )}
     </div>
   );
+};
+
+const styles = {
+  container: {
+    padding: '2rem',
+    backgroundColor: '#f0f2f5',
+  },
+  title: {
+    fontSize: '24px',
+    color: '#333',
+    marginBottom: '1rem',
+  },
+  list: {
+    listStyle: 'none',
+    padding: 0,
+  },
+  listItem: {
+    backgroundColor: '#fff',
+    borderRadius: '5px',
+    padding: '1rem',
+    marginBottom: '1rem',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  },
+  button: {
+    marginTop: '0.5rem',
+    padding: '0.5rem 1rem',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
+  deleteButton: {
+    marginTop: '0.5rem',
+    padding: '0.5rem 1rem',
+    backgroundColor: '#dc3545',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    marginLeft: '0.5rem',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: '2rem',
+    borderRadius: '10px',
+    width: '90%',
+    maxWidth: '500px',
+  },
+  modalTitle: {
+    fontSize: '20px',
+    marginBottom: '1rem',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  label: {
+    marginBottom: '0.5rem',
+  },
+  input: {
+    padding: '0.5rem',
+    marginBottom: '1rem',
+    border: '1px solid #ddd',
+    borderRadius: '5px',
+  },
+  cancelButton: {
+    marginTop: '0.5rem',
+    padding: '0.5rem 1rem',
+    backgroundColor: '#6c757d',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
 };
 
 export default WorkList;

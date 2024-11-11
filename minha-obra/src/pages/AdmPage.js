@@ -14,20 +14,20 @@ const AdmPage = () => {
         <div style={styles.buttonContainer}>
           <button 
             style={styles.button} 
-            onClick={() => navigate('/working-site-inclusion')}
-            onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
-            onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
-          >
-            Inclusão de Obra
-          </button>
-
-          <button 
-            style={styles.button} 
             onClick={() => navigate('/worker-inclusion')}
             onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
             onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
           >
             Inclusão de Funcionário
+          </button>
+
+          <button 
+            style={styles.button} 
+            onClick={() => navigate('/working-site-inclusion')}
+            onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
+            onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
+          >
+            Inclusão de Obra
           </button>
 
           <button 
@@ -73,7 +73,7 @@ const styles = {
   },
   title: {
     fontSize: '26px',
-    color: '#333',
+    color: '#113f4b',
     marginBottom: '0.5rem',
   },
   subtitle: {
