@@ -8,6 +8,7 @@ router.post('/', workController.createWork);
 router.put('/:id', workController.updateWork);
 router.delete('/:id', workController.deleteWork);
 router.get('/', workController.getAllWorks);
+router.get('/:id', workController.getWorkById);
 
 // Aqui você pode adicionar outras rotas, como listar, atualizar e deletar obras
 

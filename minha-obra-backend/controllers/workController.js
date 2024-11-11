@@ -53,3 +53,16 @@ exports.deleteWork = async (req, res) => {
     res.status(500).json({ message: 'Erro ao deletar obra', error });
   }
 };
+
+exports.getWorkById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const work = await Work.findById(id);
+    if (!work) {
+      return res.status(404).json({ message: 'Obra não encontrada' });
+    }
+    res.status(200).json(work);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar obra', error });
+  }
+};

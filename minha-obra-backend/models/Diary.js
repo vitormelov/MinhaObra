@@ -1,22 +1,15 @@
-// models/Diary.js
+// src/models/Diary.js
 const mongoose = require('mongoose');
 
-const DiarySchema = new mongoose.Schema({
-  date: { type: String, required: true },
-  startTime: { type: String, required: true },
-  endTime: { type: String, required: true },
-  employees: [
-    {
-      quantity: { type: Number },
-      role: { type: String },
-      company: { type: String }
-    }
-  ],
-  morningWeather: { type: String, required: true },
-  afternoonWeather: { type: String, required: true },
-  activities: [{ type: String }],
-  materials: [{ type: String }],
-  occurrences: [{ type: String }],
+const diarySchema = new mongoose.Schema({
+  workId: { type: mongoose.Schema.Types.ObjectId, ref: 'Work', required: true },
+  date: { type: Date, required: true },
+  employees: [{ quantity: Number, role: String, company: String }],
+  morningWeather: String,
+  afternoonWeather: String,
+  activities: [String],
+  materials: [String],
+  occurrences: [String],
 });
 
-module.exports = mongoose.model('Diary', DiarySchema);
+module.exports = mongoose.model('Diary', diarySchema);
