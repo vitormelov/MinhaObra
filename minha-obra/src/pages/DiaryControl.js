@@ -1,11 +1,13 @@
 // src/pages/DiaryControl.js
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 
-const API_URL = 'http://localhost:5000/api/diaries'; // URL base do backend
+const API_URL = 'http://localhost:5000/api/diaries';
 
 const DiaryControl = () => {
+  const { workId } = useParams(); // Captura o ID da obra pela URL
   const [diaries, setDiaries] = useState([]);
   const [formData, setFormData] = useState({
     date: '',
@@ -27,25 +29,25 @@ const DiaryControl = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDiary, setSelectedDiary] = useState(null);
 
-  // Carregar diários do backend ao carregar o componente
+  // Carregar diários específicos da obra ao carregar o componente
   useEffect(() => {
     const fetchDiaries = async () => {
       try {
-        const response = await axios.get(API_URL);
+        const response = await axios.get(`${API_URL}/${workId}`);
         setDiaries(response.data);
       } catch (error) {
         console.error('Erro ao buscar diários:', error);
       }
     };
     fetchDiaries();
-  }, []);
+  }, [workId]);
 
   // Manipulador para as entradas do formulário principal
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Funções para adicionar funcionários, atividades, materiais e ocorrências ao diário
+  // Funções para adicionar dados temporários ao formulário de diários
   const addEmployee = () => {
     setFormData({
       ...formData,
@@ -82,7 +84,7 @@ const DiaryControl = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(API_URL, formData);
+      const response = await axios.post(`${API_URL}/${workId}`, formData);
       setDiaries([...diaries, response.data]);
       setFormData({
         date: '',
@@ -272,7 +274,7 @@ const DiaryControl = () => {
         {diaries.length > 0 ? (
           diaries.map((diary) => (
             <div key={diary._id} style={styles.diaryItem}>
-              <p><strong>Data:</strong> {diary.date}</p>
+              <p><strong>Data:</strong> {new Date(diary.date).toLocaleDateString()}</p>
               <button onClick={() => handleView(diary)}>Visualizar</button>
               <button onClick={() => handleDelete(diary._id)}>Deletar</button>
             </div>

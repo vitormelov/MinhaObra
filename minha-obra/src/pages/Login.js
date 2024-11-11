@@ -20,7 +20,7 @@ const Login = () => {
       // Armazenar o token e autenticar o usuário
       localStorage.setItem('token', response.data.token);
       login(); // Autenticar o usuário no contexto
-      navigate('/home'); // Redirecionar para a página inicial
+      navigate('/worker'); // Redireciona para a WorkerPage para seleção de obra
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       alert('Erro ao fazer login. Verifique as credenciais e tente novamente.');
