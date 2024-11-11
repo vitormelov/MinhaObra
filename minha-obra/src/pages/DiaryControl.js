@@ -25,7 +25,6 @@ const DiaryControl = () => {
   const [activity, setActivity] = useState('');
   const [material, setMaterial] = useState('');
   const [occurrence, setOccurrence] = useState('');
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDiary, setSelectedDiary] = useState(null);
 
@@ -151,67 +150,75 @@ const DiaryControl = () => {
 
       {/* Formulário para adicionar novo diário */}
       <form onSubmit={handleSubmit} style={styles.form}>
-        <div>
-          <label>Data:</label>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Data:</label>
           <input
             type="date"
             name="date"
             value={formData.date}
             onChange={handleChange}
             required
+            style={styles.input}
           />
         </div>
 
         {/* Horário de início e término da obra */}
-        <div>
-          <label>Horário de Início:</label>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Horário de Início:</label>
           <input
             type="time"
             name="startTime"
             value={formData.startTime}
             onChange={handleChange}
             required
+            style={styles.input}
           />
         </div>
-        <div>
-          <label>Horário de Término:</label>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Horário de Término:</label>
           <input
             type="time"
             name="endTime"
             value={formData.endTime}
             onChange={handleChange}
             required
+            style={styles.input}
           />
         </div>
 
         {/* Seção para adicionar funcionários */}
-        <div>
-          <label>Funcionários</label>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Funcionários</label>
           <input
             type="number"
             placeholder="Quantidade"
             value={employee.quantity}
             onChange={(e) => setEmployee({ ...employee, quantity: e.target.value })}
+            style={styles.input}
           />
           <input
             type="text"
             placeholder="Função"
             value={employee.role}
             onChange={(e) => setEmployee({ ...employee, role: e.target.value })}
+            style={styles.input}
           />
           <input
             type="text"
             placeholder="Empresa"
             value={employee.company}
             onChange={(e) => setEmployee({ ...employee, company: e.target.value })}
+            style={styles.input}
           />
-          <button type="button" onClick={addEmployee}>Adicionar Funcionário</button>
+          <button type="button" onClick={addEmployee} style={styles.button}>
+            Adicionar Funcionário
+          </button>
         </div>
 
         {/* Seção para Clima */}
-        <div>
-          <label>Clima da Manhã</label>
-          <select name="morningWeather" value={formData.morningWeather} onChange={handleChange} required>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Clima da Manhã</label>
+          <select name="morningWeather" value={formData.morningWeather} onChange={handleChange} required style={styles.input}>
             <option value="">Selecione</option>
             <option value="limpo">Limpo</option>
             <option value="nublado">Nublado</option>
@@ -219,9 +226,9 @@ const DiaryControl = () => {
             <option value="impraticável">Impraticável</option>
           </select>
         </div>
-        <div>
-          <label>Clima da Tarde</label>
-          <select name="afternoonWeather" value={formData.afternoonWeather} onChange={handleChange} required>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Clima da Tarde</label>
+          <select name="afternoonWeather" value={formData.afternoonWeather} onChange={handleChange} required style={styles.input}>
             <option value="">Selecione</option>
             <option value="limpo">Limpo</option>
             <option value="nublado">Nublado</option>
@@ -231,42 +238,51 @@ const DiaryControl = () => {
         </div>
 
         {/* Seção para Atividades Executadas */}
-        <div>
-          <label>Atividades Executadas</label>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Atividades Executadas</label>
           <input
             type="text"
             placeholder="Descrição da atividade"
             value={activity}
             onChange={(e) => setActivity(e.target.value)}
+            style={styles.input}
           />
-          <button type="button" onClick={addActivity}>Adicionar Atividade</button>
+          <button type="button" onClick={addActivity} style={styles.button}>
+            Adicionar Atividade
+          </button>
         </div>
 
         {/* Seção para Material Entregue */}
-        <div>
-          <label>Material Entregue</label>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Material Entregue</label>
           <input
             type="text"
             placeholder="Descrição do material"
             value={material}
             onChange={(e) => setMaterial(e.target.value)}
+            style={styles.input}
           />
-          <button type="button" onClick={addMaterial}>Adicionar Material</button>
+          <button type="button" onClick={addMaterial} style={styles.button}>
+            Adicionar Material
+          </button>
         </div>
 
         {/* Seção para Ocorrências */}
-        <div>
-          <label>Ocorrências</label>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Ocorrências</label>
           <input
             type="text"
             placeholder="Descrição da ocorrência"
             value={occurrence}
             onChange={(e) => setOccurrence(e.target.value)}
+            style={styles.input}
           />
-          <button type="button" onClick={addOccurrence}>Adicionar Ocorrência</button>
+          <button type="button" onClick={addOccurrence} style={styles.button}>
+            Adicionar Ocorrência
+          </button>
         </div>
 
-        <button type="submit">Salvar Diário</button>
+        <button type="submit" style={styles.button}>Salvar Diário</button>
       </form>
 
       {/* Lista de diários */}
@@ -275,8 +291,8 @@ const DiaryControl = () => {
           diaries.map((diary) => (
             <div key={diary._id} style={styles.diaryItem}>
               <p><strong>Data:</strong> {new Date(diary.date).toLocaleDateString()}</p>
-              <button onClick={() => handleView(diary)}>Visualizar</button>
-              <button onClick={() => handleDelete(diary._id)}>Deletar</button>
+              <button onClick={() => handleView(diary)} style={styles.button}>Visualizar</button>
+              <button onClick={() => handleDelete(diary._id)} style={styles.deleteButton}>Deletar</button>
             </div>
           ))
         ) : (
@@ -309,8 +325,8 @@ const DiaryControl = () => {
             {selectedDiary.occurrences.map((occ, i) => (
               <p key={i}>{occ}</p>
             ))}
-            <button onClick={handleExportPDF}>Exportar para PDF</button>
-            <button onClick={() => setIsModalOpen(false)}>Fechar</button>
+            <button onClick={handleExportPDF} style={styles.exportButton}>Exportar para PDF</button>
+            <button onClick={() => setIsModalOpen(false)} style={styles.button}>Fechar</button>
           </div>
         </div>
       )}
@@ -318,13 +334,97 @@ const DiaryControl = () => {
   );
 };
 
-// Estilos para o layout
 const styles = {
-  form: { /* Estilos para o formulário */ },
-  diaryList: { /* Estilos para lista de diários */ },
-  diaryItem: { /* Estilos para cada item de diário */ },
-  modalOverlay: { /* Estilos para o fundo do modal */ },
-  modalContent: { /* Estilos para o conteúdo do modal */ },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    padding: '2rem',
+    backgroundColor: '#ffffff',
+    borderRadius: '10px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    maxWidth: '600px',
+    margin: 'auto',
+    textAlign: 'left',
+  },
+  diaryList: {
+    marginTop: '2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  },
+  diaryItem: {
+    backgroundColor: '#ffffff',
+    borderRadius: '10px',
+    padding: '1rem',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    padding: '2rem',
+    borderRadius: '10px',
+    width: '90%',
+    maxWidth: '500px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+  },
+  inputGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginBottom: '1rem',
+  },
+  label: {
+    fontSize: '14px',
+    color: '#666',
+    marginBottom: '0.5rem',
+  },
+  input: {
+    padding: '0.75rem',
+    border: '1px solid #ddd',
+    borderRadius: '5px',
+    fontSize: '16px',
+    transition: 'border-color 0.3s',
+    boxSizing: 'border-box',
+  },
+  button: {
+    padding: '0.75rem 1rem',
+    backgroundColor: '#007bff',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s',
+    fontSize: '16px',
+    fontWeight: 'bold',
+  },
+  buttonHover: {
+    backgroundColor: '#0056b3',
+  },
+  exportButton: {
+    marginTop: '1rem',
+    padding: '0.5rem 1rem',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    fontSize: '14px',
+    borderRadius: '5px',
+    border: 'none',
+    cursor: 'pointer',
+  },
 };
+
 
 export default DiaryControl;
