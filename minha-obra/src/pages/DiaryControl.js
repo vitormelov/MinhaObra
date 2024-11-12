@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import jsPDF from 'jspdf';
+import { generateDiaryPDF } from '../utils/pdfStyles'; // Importa a função de estilo do PDF
 
 const API_URL = 'http://localhost:5000/api/diaries';
 
 const DiaryControl = () => {
-  const { workId } = useParams(); // Captura o ID da obra pela URL
+  const { workId } = useParams();
   const [diaries, setDiaries] = useState([]);
   const [formData, setFormData] = useState({
     date: '',
@@ -28,7 +28,6 @@ const DiaryControl = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDiary, setSelectedDiary] = useState(null);
 
-  // Carregar diários específicos da obra ao carregar o componente
   useEffect(() => {
     const fetchDiaries = async () => {
       try {
@@ -41,12 +40,10 @@ const DiaryControl = () => {
     fetchDiaries();
   }, [workId]);
 
-  // Manipulador para as entradas do formulário principal
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Funções para adicionar dados temporários ao formulário de diários
   const addEmployee = () => {
     setFormData({
       ...formData,
@@ -79,9 +76,9 @@ const DiaryControl = () => {
     setOccurrence('');
   };
 
-  // Função para salvar o diário no backend
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Dados do formulário enviados:", formData);
     try {
       const response = await axios.post(`${API_URL}/${workId}`, formData);
       setDiaries([...diaries, response.data]);
@@ -104,10 +101,10 @@ const DiaryControl = () => {
   // Função para visualizar o diário em um modal
   const handleView = (diary) => {
     setSelectedDiary(diary);
+    console.log("Selected Diary:", diary); // Log para inspecionar o diário selecionado
     setIsModalOpen(true);
   };
 
-  // Função para deletar o diário no backend
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${API_URL}/${id}`);
@@ -117,31 +114,8 @@ const DiaryControl = () => {
     }
   };
 
-  // Função para exportar o diário selecionado para PDF
   const handleExportPDF = () => {
-    const doc = new jsPDF();
-    doc.text(`Diário de Obra - ${selectedDiary.date}`, 10, 10);
-    doc.text(`Horário de Início: ${selectedDiary.startTime}`, 10, 20);
-    doc.text(`Horário de Término: ${selectedDiary.endTime}`, 10, 30);
-    doc.text('Funcionários:', 10, 40);
-    selectedDiary.employees.forEach((emp, i) => {
-      doc.text(`${i + 1}. ${emp.quantity} ${emp.role} - ${emp.company}`, 10, 50 + i * 10);
-    });
-    doc.text(`Clima da Manhã: ${selectedDiary.morningWeather}`, 10, 70);
-    doc.text(`Clima da Tarde: ${selectedDiary.afternoonWeather}`, 10, 80);
-    doc.text('Atividades Executadas:', 10, 90);
-    selectedDiary.activities.forEach((act, i) => {
-      doc.text(`${i + 1}. ${act}`, 10, 100 + i * 10);
-    });
-    doc.text('Material Entregue:', 10, 110);
-    selectedDiary.materials.forEach((mat, i) => {
-      doc.text(`${i + 1}. ${mat}`, 10, 120 + i * 10);
-    });
-    doc.text('Ocorrências:', 10, 130);
-    selectedDiary.occurrences.forEach((occ, i) => {
-      doc.text(`${i + 1}. ${occ}`, 10, 140 + i * 10);
-    });
-    doc.save(`Diário_${selectedDiary.date}.pdf`);
+    generateDiaryPDF(selectedDiary); // Usa a função do arquivo pdfStyles.js
   };
 
   return (
@@ -162,7 +136,6 @@ const DiaryControl = () => {
           />
         </div>
 
-        {/* Horário de início e término da obra */}
         <div style={styles.inputGroup}>
           <label style={styles.label}>Horário de Início:</label>
           <input
@@ -186,7 +159,7 @@ const DiaryControl = () => {
           />
         </div>
 
-        {/* Seção para adicionar funcionários */}
+        {/* Funcionários */}
         <div style={styles.inputGroup}>
           <label style={styles.label}>Funcionários</label>
           <input
@@ -213,31 +186,14 @@ const DiaryControl = () => {
           <button type="button" onClick={addEmployee} style={styles.button}>
             Adicionar Funcionário
           </button>
+          <ul>
+            {formData.employees.map((emp, index) => (
+              <li key={index}>{`${emp.quantity} ${emp.role} - ${emp.company}`}</li>
+            ))}
+          </ul>
         </div>
 
-        {/* Seção para Clima */}
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Clima da Manhã</label>
-          <select name="morningWeather" value={formData.morningWeather} onChange={handleChange} required style={styles.input}>
-            <option value="">Selecione</option>
-            <option value="limpo">Limpo</option>
-            <option value="nublado">Nublado</option>
-            <option value="chuvoso">Chuvoso</option>
-            <option value="impraticável">Impraticável</option>
-          </select>
-        </div>
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Clima da Tarde</label>
-          <select name="afternoonWeather" value={formData.afternoonWeather} onChange={handleChange} required style={styles.input}>
-            <option value="">Selecione</option>
-            <option value="limpo">Limpo</option>
-            <option value="nublado">Nublado</option>
-            <option value="chuvoso">Chuvoso</option>
-            <option value="impraticável">Impraticável</option>
-          </select>
-        </div>
-
-        {/* Seção para Atividades Executadas */}
+        {/* Atividades Executadas */}
         <div style={styles.inputGroup}>
           <label style={styles.label}>Atividades Executadas</label>
           <input
@@ -250,9 +206,14 @@ const DiaryControl = () => {
           <button type="button" onClick={addActivity} style={styles.button}>
             Adicionar Atividade
           </button>
+          <ul>
+            {formData.activities.map((act, index) => (
+              <li key={index}>{act}</li>
+            ))}
+          </ul>
         </div>
 
-        {/* Seção para Material Entregue */}
+        {/* Materiais */}
         <div style={styles.inputGroup}>
           <label style={styles.label}>Material Entregue</label>
           <input
@@ -265,9 +226,14 @@ const DiaryControl = () => {
           <button type="button" onClick={addMaterial} style={styles.button}>
             Adicionar Material
           </button>
+          <ul>
+            {formData.materials.map((mat, index) => (
+              <li key={index}>{mat}</li>
+            ))}
+          </ul>
         </div>
 
-        {/* Seção para Ocorrências */}
+        {/* Ocorrências */}
         <div style={styles.inputGroup}>
           <label style={styles.label}>Ocorrências</label>
           <input
@@ -280,6 +246,11 @@ const DiaryControl = () => {
           <button type="button" onClick={addOccurrence} style={styles.button}>
             Adicionar Ocorrência
           </button>
+          <ul>
+            {formData.occurrences.map((occ, index) => (
+              <li key={index}>{occ}</li>
+            ))}
+          </ul>
         </div>
 
         <button type="submit" style={styles.button}>Salvar Diário</button>
@@ -290,13 +261,15 @@ const DiaryControl = () => {
         {diaries.length > 0 ? (
           diaries.map((diary) => (
             <div key={diary._id} style={styles.diaryItem}>
-              <p><strong>Data:</strong> {new Date(diary.date).toLocaleDateString()}</p>
-              <button onClick={() => handleView(diary)} style={styles.button}>Visualizar</button>
-              <button onClick={() => handleDelete(diary._id)} style={styles.deleteButton}>Deletar</button>
+              <p style={styles.diaryText}><strong>Data:</strong> {new Date(diary.date).toLocaleDateString()}</p>
+              <div style={styles.buttonGroup}>
+                <button onClick={() => handleView(diary)} style={styles.button}>Visualizar</button>
+                <button onClick={() => handleDelete(diary._id)} style={styles.deleteButton}>Deletar</button>
+              </div>
             </div>
           ))
         ) : (
-          <p>Nenhum diário registrado ainda.</p>
+          <p style={styles.noDiariesText}>Nenhum diário registrado ainda.</p>
         )}
       </div>
 
@@ -304,27 +277,40 @@ const DiaryControl = () => {
       {isModalOpen && selectedDiary && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>
-            <h3>Diário de {selectedDiary.date}</h3>
+            <h3>Diário de {new Date(selectedDiary.date).toLocaleDateString()}</h3>
+            
+            {/* Exibindo horários diretamente */}
             <p><strong>Horário de Início:</strong> {selectedDiary.startTime}</p>
             <p><strong>Horário de Término:</strong> {selectedDiary.endTime}</p>
+
+            {/* Funcionários */}
             <p><strong>Funcionários:</strong></p>
             {selectedDiary.employees.map((emp, i) => (
               <p key={i}>{emp.quantity} {emp.role} - {emp.company}</p>
             ))}
+
+            {/* Clima */}
             <p><strong>Clima da Manhã:</strong> {selectedDiary.morningWeather}</p>
             <p><strong>Clima da Tarde:</strong> {selectedDiary.afternoonWeather}</p>
+
+            {/* Atividades Executadas */}
             <p><strong>Atividades Executadas:</strong></p>
             {selectedDiary.activities.map((act, i) => (
               <p key={i}>{act}</p>
             ))}
+
+            {/* Material Entregue */}
             <p><strong>Material Entregue:</strong></p>
             {selectedDiary.materials.map((mat, i) => (
               <p key={i}>{mat}</p>
             ))}
+
+            {/* Ocorrências */}
             <p><strong>Ocorrências:</strong></p>
             {selectedDiary.occurrences.map((occ, i) => (
               <p key={i}>{occ}</p>
             ))}
+
             <button onClick={handleExportPDF} style={styles.exportButton}>Exportar para PDF</button>
             <button onClick={() => setIsModalOpen(false)} style={styles.button}>Fechar</button>
           </div>
@@ -352,6 +338,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
+    maxHeight: '60vh', // Limita a altura da lista para barra de rolagem
+    overflowY: 'auto',  // Adiciona barra de rolagem vertical
   },
   diaryItem: {
     backgroundColor: '#ffffff',
@@ -361,6 +349,41 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  diaryText: {
+    fontSize: '16px',
+    color: '#333',
+  },
+  buttonGroup: {
+    display: 'flex',
+    gap: '0.5rem',
+  },
+  button: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#007bff',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    transition: 'background-color 0.3s',
+  },
+  deleteButton: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#dc3545',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    transition: 'background-color 0.3s',
+  },
+  noDiariesText: {
+    fontSize: '16px',
+    color: '#666',
+    textAlign: 'center',
   },
   modalOverlay: {
     position: 'fixed',
@@ -380,6 +403,8 @@ const styles = {
     borderRadius: '10px',
     width: '90%',
     maxWidth: '500px',
+    maxHeight: '80vh', // Limita a altura máxima do modal
+    overflowY: 'auto',  // Adiciona a barra de rolagem vertical
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
   },
   inputGroup: {
@@ -400,17 +425,6 @@ const styles = {
     transition: 'border-color 0.3s',
     boxSizing: 'border-box',
   },
-  button: {
-    padding: '0.75rem 1rem',
-    backgroundColor: '#007bff',
-    color: '#ffffff',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s',
-    fontSize: '16px',
-    fontWeight: 'bold',
-  },
   buttonHover: {
     backgroundColor: '#0056b3',
   },
@@ -425,6 +439,5 @@ const styles = {
     cursor: 'pointer',
   },
 };
-
 
 export default DiaryControl;
