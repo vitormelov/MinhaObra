@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { generateDiaryPDF } from '../utils/pdfStyles'; // Importa a função de estilo do PDF
+import { generateDiaryPDF } from '../utils/pdfStyles'; // Importa a função para gerar PDF
 
-const API_URL = 'http://localhost:5000/api/diaries';
+const API_URL = 'http://localhost:5000/api';
 
 const DiaryControl = () => {
-  const { workId } = useParams();
+  const { workId } = useParams(); // Captura o ID da obra pela URL
+  const [work, setWork] = useState(null); // Estado para armazenar os dados da obra
   const [diaries, setDiaries] = useState([]);
   const [formData, setFormData] = useState({
     date: '',
@@ -28,22 +29,30 @@ const DiaryControl = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDiary, setSelectedDiary] = useState(null);
 
+  // Carregar dados da obra e diários ao carregar o componente
   useEffect(() => {
-    const fetchDiaries = async () => {
+    const fetchWorkAndDiaries = async () => {
       try {
-        const response = await axios.get(`${API_URL}/${workId}`);
-        setDiaries(response.data);
+        // Buscar dados da obra
+        const workResponse = await axios.get(`${API_URL}/works/${workId}`);
+        setWork(workResponse.data);
+
+        // Buscar diários relacionados à obra
+        const diariesResponse = await axios.get(`${API_URL}/diaries/${workId}`);
+        setDiaries(diariesResponse.data);
       } catch (error) {
-        console.error('Erro ao buscar diários:', error);
+        console.error('Erro ao buscar dados:', error);
       }
     };
-    fetchDiaries();
+    fetchWorkAndDiaries();
   }, [workId]);
 
+  // Função para manipular entradas do formulário
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Funções para adicionar dados temporários ao formulário de diários
   const addEmployee = () => {
     setFormData({
       ...formData,
@@ -76,11 +85,12 @@ const DiaryControl = () => {
     setOccurrence('');
   };
 
+  // Função para salvar o diário no backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Dados do formulário enviados:", formData);
     try {
-      const response = await axios.post(`${API_URL}/${workId}`, formData);
+      const response = await axios.post(`${API_URL}/diaries/${workId}`, formData);
       setDiaries([...diaries, response.data]);
       setFormData({
         date: '',
@@ -105,17 +115,23 @@ const DiaryControl = () => {
     setIsModalOpen(true);
   };
 
+  // Função para deletar o diário no backend
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      await axios.delete(`${API_URL}/diaries/${id}`);
       setDiaries(diaries.filter((diary) => diary._id !== id));
     } catch (error) {
       console.error('Erro ao deletar o diário:', error);
     }
   };
 
+  // Função para exportar o diário selecionado para PDF com cabeçalho da obra
   const handleExportPDF = () => {
-    generateDiaryPDF(selectedDiary); // Usa a função do arquivo pdfStyles.js
+    if (work && selectedDiary) {
+      generateDiaryPDF(selectedDiary, work); // Passa os dados do diário e da obra para o PDF
+    } else {
+      console.error("Dados da obra ou diário não disponíveis para exportação");
+    }
   };
 
   return (
