@@ -37,7 +37,7 @@ const WorkingSiteInclusion = () => {
     const newWork = { name, address, type, startDate, duration, endDate };
 
     try {
-      await axios.post('http://localhost:5000/api/works', newWork);
+      await axios.post('http://192.168.15.95:5000/api/works', newWork);
       alert('Obra cadastrada com sucesso!');
       setName('');
       setAddress('');

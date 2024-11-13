@@ -16,7 +16,7 @@ const WorkList = () => {
 
   const fetchWorkers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/workers');
+      const response = await axios.get('http://192.168.15.95:5000/api/workers');
       setWorkers(response.data);
     } catch (error) {
       console.error('Erro ao buscar funcionários:', error);
@@ -25,7 +25,7 @@ const WorkList = () => {
 
   const fetchWorks = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/works');
+      const response = await axios.get('http://192.168.15.95:5000/api/works');
       setWorks(response.data);
     } catch (error) {
       console.error('Erro ao buscar obras:', error);
@@ -34,7 +34,7 @@ const WorkList = () => {
 
   const deleteWorker = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/workers/${id}`);
+      await axios.delete(`http://192.168.15.95:5000/api/workers/${id}`);
       setWorkers(workers.filter((worker) => worker._id !== id));
     } catch (error) {
       console.error('Erro ao deletar funcionário:', error);
@@ -43,7 +43,7 @@ const WorkList = () => {
 
   const deleteWork = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/works/${id}`);
+      await axios.delete(`http://192.168.15.95:5000/api/works/${id}`);
       setWorks(works.filter((work) => work._id !== id));
     } catch (error) {
       console.error('Erro ao deletar obra:', error);
@@ -65,8 +65,8 @@ const WorkList = () => {
     e.preventDefault();
     try {
       const url = isWorker
-        ? `http://localhost:5000/api/workers/${editData._id}`
-        : `http://localhost:5000/api/works/${editData._id}`;
+        ? `http://192.168.15.95:5000/api/workers/${editData._id}`
+        : `http://192.168.15.95:5000/api/works/${editData._id}`;
       await axios.put(url, editData);
       isWorker ? fetchWorkers() : fetchWorks();
       closeEditModal();

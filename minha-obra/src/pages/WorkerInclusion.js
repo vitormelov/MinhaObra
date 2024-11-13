@@ -19,7 +19,7 @@ const WorkerInclusion = () => {
     const newWorker = { name, email, password };
 
     try {
-      await axios.post('http://localhost:5000/api/workers', newWorker);
+      await axios.post('http://192.168.15.95:5000/api/workers', newWorker);
       alert('Funcionário cadastrado com sucesso!');
       setName('');
       setEmail('');

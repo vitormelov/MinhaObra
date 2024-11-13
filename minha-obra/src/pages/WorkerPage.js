@@ -10,7 +10,7 @@ const WorkerPage = () => {
   useEffect(() => {
     const fetchWorks = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/works');
+        const response = await axios.get('http://192.168.15.95:5000/api/works');
         setWorks(response.data);
       } catch (error) {
         console.error('Erro ao buscar obras:', error);

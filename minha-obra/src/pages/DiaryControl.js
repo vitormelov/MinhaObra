@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { generateDiaryPDF } from '../utils/pdfStyles'; // Importa a função para gerar PDF
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://192.168.15.95:5000/api';
 
 const DiaryControl = () => {
   const { workId } = useParams(); // Captura o ID da obra pela URL
@@ -136,7 +136,7 @@ const DiaryControl = () => {
 
   return (
     <div>
-      <h2>Diário de Obra</h2>
+      <h2 style={styles.title}>Inclusão de Diário</h2>
 
       {/* Formulário para adicionar novo diário */}
       <form onSubmit={handleSubmit} style={styles.form}>
@@ -175,6 +175,42 @@ const DiaryControl = () => {
           />
         </div>
 
+        {/* Clima da manhã */}
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Clima da Manhã</label>
+          <select
+            name="morningWeather"
+            value={formData.morningWeather}
+            onChange={handleChange}
+            required
+            style={styles.input}
+          >
+            <option value="">Selecione</option>
+            <option value="limpo">Limpo</option>
+            <option value="nublado">Nublado</option>
+            <option value="chuvoso">Chuvoso</option>
+            <option value="impraticável">Impraticável</option>
+          </select>
+        </div>
+
+        {/* Clima da tarde */}
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Clima da Tarde</label>
+          <select
+            name="afternoonWeather"
+            value={formData.afternoonWeather}
+            onChange={handleChange}
+            required
+            style={styles.input}
+          >
+            <option value="">Selecione</option>
+            <option value="limpo">Limpo</option>
+            <option value="nublado">Nublado</option>
+            <option value="chuvoso">Chuvoso</option>
+            <option value="impraticável">Impraticável</option>
+          </select>
+        </div>
+
         {/* Funcionários */}
         <div style={styles.inputGroup}>
           <label style={styles.label}>Funcionários</label>
@@ -183,21 +219,21 @@ const DiaryControl = () => {
             placeholder="Quantidade"
             value={employee.quantity}
             onChange={(e) => setEmployee({ ...employee, quantity: e.target.value })}
-            style={styles.input}
+            style={styles.input2}
           />
           <input
             type="text"
             placeholder="Função"
             value={employee.role}
             onChange={(e) => setEmployee({ ...employee, role: e.target.value })}
-            style={styles.input}
+            style={styles.input2}
           />
           <input
             type="text"
             placeholder="Empresa"
             value={employee.company}
             onChange={(e) => setEmployee({ ...employee, company: e.target.value })}
-            style={styles.input}
+            style={styles.input2}
           />
           <button type="button" onClick={addEmployee} style={styles.button}>
             Adicionar Funcionário
@@ -217,7 +253,7 @@ const DiaryControl = () => {
             placeholder="Descrição da atividade"
             value={activity}
             onChange={(e) => setActivity(e.target.value)}
-            style={styles.input}
+            style={styles.input2}
           />
           <button type="button" onClick={addActivity} style={styles.button}>
             Adicionar Atividade
@@ -237,7 +273,7 @@ const DiaryControl = () => {
             placeholder="Descrição do material"
             value={material}
             onChange={(e) => setMaterial(e.target.value)}
-            style={styles.input}
+            style={styles.input2}
           />
           <button type="button" onClick={addMaterial} style={styles.button}>
             Adicionar Material
@@ -257,7 +293,7 @@ const DiaryControl = () => {
             placeholder="Descrição da ocorrência"
             value={occurrence}
             onChange={(e) => setOccurrence(e.target.value)}
-            style={styles.input}
+            style={styles.input2}
           />
           <button type="button" onClick={addOccurrence} style={styles.button}>
             Adicionar Ocorrência
@@ -269,8 +305,10 @@ const DiaryControl = () => {
           </ul>
         </div>
 
-        <button type="submit" style={styles.button}>Salvar Diário</button>
+        <button type="submit" style={styles.saveButton}>Salvar Diário</button>
       </form>
+
+      <h2 style={styles.title}>Lista de diários</h2>
 
       {/* Lista de diários */}
       <div style={styles.diaryList}>
@@ -327,8 +365,11 @@ const DiaryControl = () => {
               <p key={i}>{occ}</p>
             ))}
 
-            <button onClick={handleExportPDF} style={styles.exportButton}>Exportar para PDF</button>
-            <button onClick={() => setIsModalOpen(false)} style={styles.button}>Fechar</button>
+            <div style={styles.modalButtons}>
+              <button onClick={handleExportPDF} style={styles.exportButton}>Exportar para PDF</button>
+              <button onClick={() => setIsModalOpen(false)} style={styles.button}>Fechar</button>
+            </div>
+
           </div>
         </div>
       )}
@@ -349,8 +390,14 @@ const styles = {
     margin: 'auto',
     textAlign: 'left',
   },
+  title: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
   diaryList: {
+    margin: '0 auto',
     marginTop: '2rem',
+    maxWidth: '664px',
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
@@ -377,6 +424,17 @@ const styles = {
   button: {
     padding: '0.5rem 1rem',
     backgroundColor: '#007bff',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    transition: 'background-color 0.3s',
+  },
+  saveButton: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#28a745',
     color: '#ffffff',
     border: 'none',
     borderRadius: '5px',
@@ -423,6 +481,12 @@ const styles = {
     overflowY: 'auto',  // Adiciona a barra de rolagem vertical
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
   },
+  modalButtons: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: '1rem'
+  },
   inputGroup: {
     display: 'flex',
     flexDirection: 'column',
@@ -441,11 +505,19 @@ const styles = {
     transition: 'border-color 0.3s',
     boxSizing: 'border-box',
   },
+  input2: {
+    padding: '0.75rem',
+    border: '1px solid #ddd',
+    borderRadius: '5px',
+    fontSize: '16px',
+    transition: 'border-color 0.3s',
+    boxSizing: 'border-box',
+    marginBottom: '20px',
+  },
   buttonHover: {
     backgroundColor: '#0056b3',
   },
   exportButton: {
-    marginTop: '1rem',
     padding: '0.5rem 1rem',
     backgroundColor: '#28a745',
     color: '#fff',

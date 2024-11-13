@@ -12,7 +12,7 @@ const Home = () => {
   useEffect(() => {
     const fetchWorkDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/works/${workId}`);
+        const response = await axios.get(`http://192.168.15.95:5000/api/works/${workId}`);
         setWork(response.data);
       } catch (error) {
         console.error('Erro ao buscar detalhes da obra:', error);
